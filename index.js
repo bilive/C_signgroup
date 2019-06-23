@@ -1,0 +1,1 @@
+../../../build/bilive/plugins/C_signgroup/index.js
