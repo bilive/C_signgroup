@@ -1,4 +1,3 @@
-import { Options as requestOptions } from 'request'
 import Plugin, { tools, AppClient } from '../../plugin'
 
 class SignGroup extends Plugin {
@@ -7,7 +6,7 @@ class SignGroup extends Plugin {
   }
   public name = '应援团签到'
   public description = '在已加入的应援团签到'
-  public version = '0.0.1'
+  public version = '0.0.2'
   public author = 'lzghzr'
   /**
    * 任务表
@@ -47,9 +46,9 @@ class SignGroup extends Plugin {
     users.forEach(async (user, uid) => {
       if (this._signGroupList.get(uid) || !user.userData['signGroup']) return
       // 获取已加入应援团列表
-      const group: requestOptions = {
-        uri: `https://api.live.bilibili.com/link_group/v1/member/my_groups?${AppClient.signQueryBase(user.tokenQuery)}`,
-        json: true,
+      const group: XHRoptions = {
+        url: `https://api.live.bilibili.com/link_group/v1/member/my_groups?${AppClient.signQueryBase(user.tokenQuery)}`,
+        responseType: 'json',
         headers: user.headers
       }
       const linkGroup = await tools.XHR<linkGroup>(group, 'Android')
@@ -59,10 +58,10 @@ class SignGroup extends Plugin {
           if (listLength === 0 || listLength === this._signGroupList.get(uid)) return
           let ok = 0
           for (const groupInfo of linkGroup.body.data.list) {
-            const sign: requestOptions = {
-              uri: `https://api.live.bilibili.com/link_setting/v1/link_setting/sign_in?\
+            const sign: XHRoptions = {
+              url: `https://api.live.bilibili.com/link_setting/v1/link_setting/sign_in?\
 ${AppClient.signQueryBase(`${user.tokenQuery}&group_id=${groupInfo.group_id}&owner_id=${groupInfo.owner_uid}`)}`,
-              json: true,
+              responseType: 'json',
               headers: user.headers
             }
             // 应援团签到
